@@ -1,0 +1,6 @@
+@host = localhost
+@port = 5000
+@hostname = {{host}}:{{port}}
+
+// @name main
+GET http://{{hostname}}
