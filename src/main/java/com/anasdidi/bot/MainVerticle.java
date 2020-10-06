@@ -1,6 +1,7 @@
 package com.anasdidi.bot;
 
 import com.anasdidi.bot.common.AppConfig;
+import com.anasdidi.bot.common.AppConstant;
 import com.anasdidi.bot.domain.greeting.GreetingVerticle;
 
 import org.apache.logging.log4j.LogManager;
@@ -46,15 +47,6 @@ public class MainVerticle extends AbstractVerticle {
         logger.info("HTTP server started on {}:{}", appConfig.getAppHost(), appConfig.getAppPort());
         startPromise.complete();
       }, e -> startPromise.fail(e));
-      /*
-       * vertx.createHttpServer().requestHandler(req -> {
-       * req.response().putHeader("content-type",
-       * "text/plain").end("Hello from Vert.x!"); }).listen(appConfig.getAppPort(),
-       * appConfig.getAppHost(), http -> { if (http.succeeded()) {
-       * logger.info("HTTP server started on {}:{}", appConfig.getAppHost(),
-       * appConfig.getAppPort()); startPromise.complete(); } else {
-       * startPromise.fail(http.cause()); } });
-       */
     }, e -> startPromise.fail(e));
   }
 
@@ -69,12 +61,20 @@ public class MainVerticle extends AbstractVerticle {
     String event = requestBody.getJsonObject("message").getString("text");
     eventBus.rxRequest(event, requestBody.encode()).subscribe(handler -> {
       JsonObject response = new JsonObject((String) handler.body());
-      routingContext.response().setStatusCode(200).putHeader("content-type", "application/json").end(response.encode());
+      routingContext.response()//
+          .setStatusCode(200)//
+          .putHeader(AppConstant.Header.ContentType.value, AppConstant.MediaType.AppJson.value)//
+          .end(response.encode());
     }, e -> {
-      JsonObject response = new JsonObject()
-          .put("status", new JsonObject().put("isSuccess", false).put("message", "Get greeting failed!"))
+      JsonObject response = new JsonObject()//
+          .put("status", new JsonObject()//
+              .put("isSuccess", false)//
+              .put("message", "Get greeting failed!"))//
           .put("error", e.getMessage());
-      routingContext.response().setStatusCode(400).putHeader("content-type", "application/json").end(response.encode());
+      routingContext.response()//
+          .setStatusCode(400)//
+          .putHeader(AppConstant.Header.ContentType.value, AppConstant.MediaType.AppJson.value)//
+          .end(response.encode());
     });
   }
 }

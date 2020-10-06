@@ -1,5 +1,7 @@
 package com.anasdidi.bot.domain.greeting;
 
+import com.anasdidi.bot.common.AppConstant;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -19,7 +21,7 @@ public class GreetingVerticle extends AbstractVerticle {
 
   @Override
   public void start(Promise<Void> startPromise) throws Exception {
-    eventBus.consumer("greeting", handler -> {
+    eventBus.consumer(AppConstant.Event.Greeting.value, handler -> {
       JsonObject request = new JsonObject((String) handler.body());
       JsonObject response = new JsonObject()
           .put("status", new JsonObject().put("isSuccess", true).put("message", "Greeting received."))
