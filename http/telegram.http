@@ -12,13 +12,10 @@ GET https://{{url}}/getWebhookInfo
 
 ###
 
-@chatId = {{getMe.response.body.$.result.id}}
-
-// @name sendMessage
-POST https://{{url}}/sendMessage
+// @name setWebhook
+POST https://{{url}}/setWebhook
 Content-Type: application/json
 
 {
-  "chat_id": "{{chatId}}",
-  "text": "Hello world"
+  "url": "https://776bc19c9ffe.ngrok.io/bot",
 }

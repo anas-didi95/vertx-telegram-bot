@@ -3,7 +3,7 @@ package com.anasdidi.bot.common;
 public class AppConstants {
 
   public enum Event {
-    Greeting("greeting");
+    Greeting("/getMe");
 
     public String value;
 

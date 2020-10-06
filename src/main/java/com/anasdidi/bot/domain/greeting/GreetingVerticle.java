@@ -1,5 +1,6 @@
 package com.anasdidi.bot.domain.greeting;
 
+import com.anasdidi.bot.common.AppConfig;
 import com.anasdidi.bot.common.AppConstants;
 
 import org.apache.logging.log4j.LogManager;
@@ -9,6 +10,7 @@ import io.vertx.core.Promise;
 import io.vertx.core.json.JsonObject;
 import io.vertx.reactivex.core.AbstractVerticle;
 import io.vertx.reactivex.core.eventbus.EventBus;
+import io.vertx.reactivex.ext.web.client.WebClient;
 
 public class GreetingVerticle extends AbstractVerticle {
 
@@ -21,6 +23,9 @@ public class GreetingVerticle extends AbstractVerticle {
 
   @Override
   public void start(Promise<Void> startPromise) throws Exception {
+    WebClient webClient = WebClient.create(vertx);
+    AppConfig appConfig = AppConfig.instance();
+
     eventBus.consumer(AppConstants.Event.Greeting.value, handler -> {
       JsonObject request = new JsonObject((String) handler.body());
       String tag = AppConstants.Event.Greeting.value + ":" + request.getString("requestId");
@@ -42,6 +47,22 @@ public class GreetingVerticle extends AbstractVerticle {
 
       String message = response.encode();
       logger.info("[{}] message={}", tag, message);
+
+      String requestURI = String.format("https://api.telegram.org/bot%s/sendMessage", appConfig.getTelegramToken());
+      JsonObject body = new JsonObject()//
+          .put("chat_id", request.getJsonObject("message").getJsonObject("from").getValue("id"))//
+          .put("text", "/Hello");
+      if (logger.isDebugEnabled()) {
+        logger.debug("[{}] requestURI={}, body=\n{}", tag, requestURI, body.encodePrettily());
+      }
+
+      webClient.postAbs(requestURI)//
+          .putHeader(AppConstants.Header.ContentType.value, AppConstants.MediaType.AppJson.value)//
+          .rxSendJsonObject(body).subscribe(response1 -> {
+            logger.info("[{}] Sent successfully", tag);
+          }, e -> {
+            logger.error("[{}] Sent failed!, {}", tag, e);
+          });
       handler.reply(message);
     });
   }

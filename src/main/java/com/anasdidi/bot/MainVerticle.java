@@ -38,6 +38,8 @@ public class MainVerticle extends AbstractVerticle {
       router.route().handler(BodyHandler.create());
       router.route().handler(routingContext -> routingContext.put("requestId", AppUtils.generateId()).next());
       router.post("/").handler(this::requestHandler);
+      router.get("/test")
+          .handler(routingContext -> routingContext.response().end(new JsonObject().put("ok", true).encode()));
 
       this.eventBus = vertx.eventBus();
       vertx.deployVerticle(new GreetingVerticle(eventBus));
@@ -63,23 +65,16 @@ public class MainVerticle extends AbstractVerticle {
     }
 
     String event = requestBody.getJsonObject("message").getString("text");
+
+    if (!AppConstants.Event.Greeting.value.equals(event)) {
+      routingContext.response().end();
+    }
+
     eventBus.rxRequest(event, requestBody.encode()).subscribe(handler -> {
-      JsonObject response = new JsonObject((String) handler.body());
-      routingContext.response()//
-          .setStatusCode(200)//
-          .putHeader(AppConstants.Header.ContentType.value, AppConstants.MediaType.AppJson.value)//
-          .end(response.encode());
+      logger.info("[{}] Event success, event={}", tag, event);
     }, e -> {
-      logger.error("[{}] onError : e={}", tag, e);
-      JsonObject response = new JsonObject()//
-          .put("status", new JsonObject()//
-              .put("isSuccess", false)//
-              .put("message", "Get greeting failed!"))//
-          .put("error", e.getMessage());
-      routingContext.response()//
-          .setStatusCode(400)//
-          .putHeader(AppConstants.Header.ContentType.value, AppConstants.MediaType.AppJson.value)//
-          .end(response.encode());
+      logger.error("[{}] Event failed, ", tag, e);
     });
+    routingContext.response().end();
   }
 }

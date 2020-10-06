@@ -1,9 +1,11 @@
 @host = localhost
 @port = 5000
 @hostname = {{host}}:{{port}}
+@ngrok = https://776bc19c9ffe.ngrok.io
 
 // @name main
-POST http://{{hostname}}/bot
+POST {{ngrok}}/bot
+//POST http://{{hostname}}/bot
 
 {
   "message" : {
