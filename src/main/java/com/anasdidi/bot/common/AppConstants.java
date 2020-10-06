@@ -1,6 +1,6 @@
 package com.anasdidi.bot.common;
 
-public class AppConstant {
+public class AppConstants {
 
   public enum Event {
     Greeting("greeting");

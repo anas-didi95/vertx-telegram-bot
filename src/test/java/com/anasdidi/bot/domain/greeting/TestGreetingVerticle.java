@@ -2,7 +2,7 @@ package com.anasdidi.bot.domain.greeting;
 
 import com.anasdidi.bot.MainVerticle;
 import com.anasdidi.bot.common.AppConfig;
-import com.anasdidi.bot.common.AppConstant;
+import com.anasdidi.bot.common.AppConstants;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,7 +32,7 @@ public class TestGreetingVerticle {
     WebClient webClient = WebClient.create(vertx);
     JsonObject body = new JsonObject()//
         .put("message", new JsonObject()//
-            .put("text", AppConstant.Event.Greeting.value)//
+            .put("text", AppConstants.Event.Greeting.value)//
             .put("from", new JsonObject()//
                 .put("id", System.currentTimeMillis())));
 

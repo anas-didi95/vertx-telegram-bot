@@ -1,7 +1,8 @@
 package com.anasdidi.bot;
 
 import com.anasdidi.bot.common.AppConfig;
-import com.anasdidi.bot.common.AppConstant;
+import com.anasdidi.bot.common.AppConstants;
+import com.anasdidi.bot.common.AppUtils;
 import com.anasdidi.bot.domain.greeting.GreetingVerticle;
 
 import org.apache.logging.log4j.LogManager;
@@ -35,6 +36,7 @@ public class MainVerticle extends AbstractVerticle {
 
       Router router = Router.router(vertx);
       router.route().handler(BodyHandler.create());
+      router.route().handler(routingContext -> routingContext.put("requestId", AppUtils.generateId()).next());
       router.post("/").handler(this::requestHandler);
 
       this.eventBus = vertx.eventBus();
@@ -51,11 +53,13 @@ public class MainVerticle extends AbstractVerticle {
   }
 
   private void requestHandler(RoutingContext routingContext) {
-    final String TAG = "[requestHandler]";
-    JsonObject requestBody = routingContext.getBodyAsJson();
+    String requestId = routingContext.get("requestId");
+    String tag = "requestHandler:" + requestId;
+    JsonObject requestBody = routingContext.getBodyAsJson()//
+        .put("requestId", requestId);
 
     if (logger.isDebugEnabled()) {
-      logger.debug("{} requestBody\n{}", TAG, requestBody.encodePrettily());
+      logger.debug("[{}] requestBody\n{}", tag, requestBody.encodePrettily());
     }
 
     String event = requestBody.getJsonObject("message").getString("text");
@@ -63,9 +67,10 @@ public class MainVerticle extends AbstractVerticle {
       JsonObject response = new JsonObject((String) handler.body());
       routingContext.response()//
           .setStatusCode(200)//
-          .putHeader(AppConstant.Header.ContentType.value, AppConstant.MediaType.AppJson.value)//
+          .putHeader(AppConstants.Header.ContentType.value, AppConstants.MediaType.AppJson.value)//
           .end(response.encode());
     }, e -> {
+      logger.error("[{}] onError : e={}", tag, e);
       JsonObject response = new JsonObject()//
           .put("status", new JsonObject()//
               .put("isSuccess", false)//
@@ -73,7 +78,7 @@ public class MainVerticle extends AbstractVerticle {
           .put("error", e.getMessage());
       routingContext.response()//
           .setStatusCode(400)//
-          .putHeader(AppConstant.Header.ContentType.value, AppConstant.MediaType.AppJson.value)//
+          .putHeader(AppConstants.Header.ContentType.value, AppConstants.MediaType.AppJson.value)//
           .end(response.encode());
     });
   }
