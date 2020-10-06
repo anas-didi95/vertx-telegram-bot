@@ -19,7 +19,7 @@ public class GreetingVerticle extends AbstractVerticle {
 
   @Override
   public void start(Promise<Void> startPromise) throws Exception {
-    eventBus.consumer("get-greeting", handler -> {
+    eventBus.consumer("greeting", handler -> {
       JsonObject request = new JsonObject((String) handler.body());
       JsonObject response = new JsonObject()
           .put("status", new JsonObject().put("isSuccess", true).put("message", "Greeting received."))

@@ -66,7 +66,7 @@ public class MainVerticle extends AbstractVerticle {
       logger.debug("{} requestBody\n{}", TAG, requestBody.encodePrettily());
     }
 
-    String event = requestBody.getString("event");
+    String event = requestBody.getJsonObject("message").getString("text");
     eventBus.rxRequest(event, requestBody.encode()).subscribe(handler -> {
       JsonObject response = new JsonObject((String) handler.body());
       routingContext.response().setStatusCode(200).putHeader("content-type", "application/json").end(response.encode());
