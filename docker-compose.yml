@@ -5,6 +5,8 @@ services:
     build:
       context: .devcontainer
       dockerfile: Dockerfile
+    environment:
+      TELEGRAM_TOKEN: ${TELEGRAM_TOKEN?:TELEGRAM_TOKEN}
     command: sleep infinity
     ports:
       - "5000:5000"

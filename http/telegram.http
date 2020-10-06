@@ -1,0 +1,24 @@
+@host=api.telegram.org/bot
+@token={{$processEnv TELEGRAM_TOKEN}}
+@url = {{host}}{{token}}
+
+// @name getMe
+GET https://{{url}}/getMe
+
+###
+
+// @name getWebhookInfo
+GET https://{{url}}/getWebhookInfo
+
+###
+
+@chatId = {{getMe.response.body.$.result.id}}
+
+// @name sendMessage
+POST https://{{url}}/sendMessage
+Content-Type: application/json
+
+{
+  "chat_id": "{{chatId}}",
+  "text": "Hello world"
+}
