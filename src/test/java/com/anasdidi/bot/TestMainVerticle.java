@@ -1,6 +1,6 @@
-package com.anas.bot;
+package com.anasdidi.bot;
 
-import com.anas.bot.common.AppConfig;
+import com.anasdidi.bot.common.AppConfig;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;

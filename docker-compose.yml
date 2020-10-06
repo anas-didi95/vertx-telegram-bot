@@ -6,6 +6,7 @@ services:
       context: .devcontainer
       dockerfile: Dockerfile
     environment:
+      LOG_LEVEL: debug
       TELEGRAM_TOKEN: ${TELEGRAM_TOKEN?:TELEGRAM_TOKEN}
     command: sleep infinity
     ports:
