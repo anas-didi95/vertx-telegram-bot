@@ -25,7 +25,7 @@ public class TestMainVerticle {
   }
 
   @Test
-  void testAppConfigSuccess(Vertx vertx, VertxTestContext testContext) {
+  void testAppConfigSuccess(Vertx vertx, VertxTestContext testContext) throws Exception {
     AppConfig appConfig = AppConfig.instance();
     testContext.verify(() -> {
       Assertions.assertNotNull(appConfig);
