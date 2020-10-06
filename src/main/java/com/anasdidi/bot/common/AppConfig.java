@@ -1,4 +1,4 @@
-package com.anas.bot.common;
+package com.anasdidi.bot.common;
 
 import io.vertx.core.json.JsonObject;
 
@@ -16,6 +16,7 @@ public class AppConfig {
     return new JsonObject()//
         .put("APP_HOST", appConfig.getAppHost())//
         .put("APP_PORT", appConfig.getAppPort())//
+        .put("LOG_LEVEL", appConfig.getLogLevel())//
         .put("TELEGRAM_TOKEN", appConfig.getTelegramToken())//
         .encodePrettily();
   }
@@ -38,6 +39,10 @@ public class AppConfig {
 
   public int getAppPort() {
     return config.getInteger("APP_PORT", 5000);
+  }
+
+  public String getLogLevel() {
+    return config.getString("LOG_LEVEL", "error");
   }
 
   public String getTelegramToken() {
