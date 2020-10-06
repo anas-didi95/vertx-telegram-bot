@@ -1,0 +1,15 @@
+@host = localhost
+@port = 5000
+@hostname = {{host}}:{{port}}
+
+// @name main
+POST http://{{hostname}}/bot
+
+{
+  "message" : {
+    "text" : "greeting",
+    "from" : {
+      "id" : "{{$guid}}"
+    }
+  }
+}
