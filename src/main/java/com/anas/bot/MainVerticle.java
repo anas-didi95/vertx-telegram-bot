@@ -21,10 +21,10 @@ public class MainVerticle extends AbstractVerticle {
 
       vertx.createHttpServer().requestHandler(req -> {
         req.response().putHeader("content-type", "text/plain").end("Hello from Vert.x!");
-      }).listen(5000, http -> {
+      }).listen(appConfig.getAppPort(), appConfig.getAppHost(), http -> {
         if (http.succeeded()) {
+          System.out.println("HTTP server started on " + appConfig.getAppHost() + ":" + appConfig.getAppPort());
           startPromise.complete();
-          System.out.println("HTTP server started on port 5000");
         } else {
           startPromise.fail(http.cause());
         }
