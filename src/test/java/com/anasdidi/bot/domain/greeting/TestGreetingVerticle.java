@@ -30,7 +30,10 @@ public class TestGreetingVerticle {
     AppConfig appConfig = AppConfig.instance();
     WebClient webClient = WebClient.create(vertx);
     JsonObject body = new JsonObject()//
-        .put("event", "get-greeting");
+        .put("message", new JsonObject()//
+            .put("text", "greeting")//
+            .put("from", new JsonObject()//
+                .put("id", System.currentTimeMillis())));
 
     webClient.post(appConfig.getAppPort(), appConfig.getAppHost(), requestURI)//
         .expect(ResponsePredicate.SC_OK).expect(ResponsePredicate.JSON).rxSendJsonObject(body).subscribe(response -> {
