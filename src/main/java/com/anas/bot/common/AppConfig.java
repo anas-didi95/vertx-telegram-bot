@@ -11,6 +11,13 @@ public class AppConfig {
     this.config = config;
   }
 
+  @Override
+  public String toString() {
+    return new JsonObject()//
+        .put("TELEGRAM_TOKEN", appConfig.getTelegramToken())//
+        .encodePrettily();
+  }
+
   public static AppConfig create(JsonObject config) {
     appConfig = new AppConfig(config);
     return appConfig;

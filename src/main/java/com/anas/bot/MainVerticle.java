@@ -16,7 +16,8 @@ public class MainVerticle extends AbstractVerticle {
         new ConfigRetrieverOptions().addStore(new ConfigStoreOptions().setType("env")));
 
     configRetriever.rxGetConfig().subscribe(config -> {
-      AppConfig.create(config);
+      AppConfig appConfig = AppConfig.create(config);
+      System.out.println("appConfig\n" + appConfig.toString());
 
       vertx.createHttpServer().requestHandler(req -> {
         req.response().putHeader("content-type", "text/plain").end("Hello from Vert.x!");
