@@ -1,9 +1,13 @@
 package com.anasdidi.bot.common;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import io.vertx.core.json.JsonObject;
 
 public class AppConfig {
 
+  private final static Logger logger = LogManager.getLogger(AppConfig.class);
   private static AppConfig appConfig;
   private JsonObject config;
 
@@ -26,9 +30,9 @@ public class AppConfig {
     return appConfig;
   }
 
-  public static AppConfig instance() throws Exception {
+  public static AppConfig instance() {
     if (appConfig == null) {
-      throw new Exception("AppConfig is null!");
+      logger.error("AppConfig is null!");
     }
     return appConfig;
   }

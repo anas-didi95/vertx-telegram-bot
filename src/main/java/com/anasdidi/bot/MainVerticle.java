@@ -17,12 +17,14 @@ import io.vertx.reactivex.core.AbstractVerticle;
 import io.vertx.reactivex.core.eventbus.EventBus;
 import io.vertx.reactivex.ext.web.Router;
 import io.vertx.reactivex.ext.web.RoutingContext;
+import io.vertx.reactivex.ext.web.client.WebClient;
 import io.vertx.reactivex.ext.web.handler.BodyHandler;
 
 public class MainVerticle extends AbstractVerticle {
 
   private static final Logger logger = LogManager.getLogger(MainVerticle.class);
   private EventBus eventBus;
+  private WebClient webClient;
 
   @Override
   public void start(Promise<Void> startPromise) throws Exception {
@@ -42,7 +44,8 @@ public class MainVerticle extends AbstractVerticle {
           .handler(routingContext -> routingContext.response().end(new JsonObject().put("ok", true).encode()));
 
       this.eventBus = vertx.eventBus();
-      vertx.deployVerticle(new GreetingVerticle(eventBus));
+      this.webClient = WebClient.create(vertx);
+      vertx.deployVerticle(new GreetingVerticle(eventBus, webClient));
 
       Router contextPath = Router.router(vertx).mountSubRouter("/bot", router);
       int port = appConfig.getAppPort();
