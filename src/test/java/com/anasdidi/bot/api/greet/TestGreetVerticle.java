@@ -22,7 +22,7 @@ public class TestGreetVerticle {
   }
 
   @Test
-  void testGetGreetingSuccess(Vertx vertx, VertxTestContext testContext) throws Exception {
+  void testGetGreetSuccess(Vertx vertx, VertxTestContext testContext) throws Exception {
     String testValue = "" + System.currentTimeMillis();
     JsonObject requestBody = new JsonObject()//
         .put("message", new JsonObject()//
