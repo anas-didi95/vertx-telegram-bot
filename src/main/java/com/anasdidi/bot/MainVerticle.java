@@ -69,7 +69,7 @@ public class MainVerticle extends AbstractVerticle {
 
     String event = requestBody.getJsonObject("message").getString("text");
 
-    if (!AppConstants.Event.Greeting.value.equals(event)) {
+    if (!AppConstants.Event.Greet.value.equals(event)) {
       routingContext.response().end();
     }
 

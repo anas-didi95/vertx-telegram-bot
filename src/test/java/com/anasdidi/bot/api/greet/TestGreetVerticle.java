@@ -26,12 +26,12 @@ public class TestGreetVerticle {
     String testValue = "" + System.currentTimeMillis();
     JsonObject requestBody = new JsonObject()//
         .put("message", new JsonObject()//
-            .put("text", AppConstants.Event.Greeting.value)//
+            .put("text", AppConstants.Event.Greet.value)//
             .put("from", new JsonObject()//
                 .put("first_name", "first_name:" + testValue)//
                 .put("id", 000)));
 
-    vertx.eventBus().rxRequest(AppConstants.Event.Greeting.value, requestBody.encode()).subscribe(response -> {
+    vertx.eventBus().rxRequest(AppConstants.Event.Greet.value, requestBody.encode()).subscribe(response -> {
       testContext.verify(() -> {
         JsonObject responseBody = new JsonObject((String) response.body());
         Assertions.assertNotNull(responseBody);

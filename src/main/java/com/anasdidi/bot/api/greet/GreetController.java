@@ -2,6 +2,7 @@ package com.anasdidi.bot.api.greet;
 
 import com.anasdidi.bot.common.AppConfig;
 import com.anasdidi.bot.common.AppConstants;
+import com.anasdidi.bot.common.AppUtils;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -20,16 +21,15 @@ public class GreetController {
   }
 
   void eventSendHelloUser(Message<Object> request) {
-    String tag = AppConstants.Event.Greeting.value;
+    String tag = AppConstants.Event.Greet.value;
     JsonObject requestBody = new JsonObject((String) request.body());
     String requestId = requestBody.getString("requestId");
 
-    AppConfig appConfig = AppConfig.instance();
-    String requestURI = String.format("https://api.telegram.org/bot%s/sendMessage", appConfig.getTelegramToken());
+    String telegramUrl = AppUtils.getTelegramUrl(AppConstants.TelegramMethod.SendMessage);
     JsonObject responseBody = new JsonObject()//
         .put("chat_id", requestBody.getJsonObject("message").getJsonObject("from").getInteger("id"))//
         .put("text", "Hello, " + requestBody.getJsonObject("message").getJsonObject("from").getString("first_name"));
-    webClient.postAbs(requestURI)//
+    webClient.postAbs(telegramUrl)//
         .putHeader(AppConstants.Header.ContentType.value, AppConstants.MediaType.AppJson.value)//
         .rxSendJsonObject(responseBody).subscribe(response -> {
           logger.info("[{}:{}] Sent successfully", tag, requestId);
@@ -37,6 +37,7 @@ public class GreetController {
           logger.error("[{}:{}] Sent failed!", tag, requestId);
           logger.error(e);
         });
+
     request.reply(responseBody.encode());
   }
 }

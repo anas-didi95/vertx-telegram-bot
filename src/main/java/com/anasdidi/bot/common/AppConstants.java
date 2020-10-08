@@ -3,7 +3,7 @@ package com.anasdidi.bot.common;
 public class AppConstants {
 
   public enum Event {
-    Greeting("/getMe");
+    Greet("/greet");
 
     public String value;
 
@@ -28,6 +28,26 @@ public class AppConstants {
     public String value;
 
     private MediaType(String value) {
+      this.value = value;
+    }
+  }
+
+  public enum Telegram {
+    UrlTemplate("https://api.telegram.org/bot%s/%s");
+
+    public String value;
+
+    private Telegram(String value) {
+      this.value = value;
+    }
+  }
+
+  public enum TelegramMethod {
+    SendMessage("sendMessage");
+
+    public String value;
+
+    private TelegramMethod(String value) {
       this.value = value;
     }
   }

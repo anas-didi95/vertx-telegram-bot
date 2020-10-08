@@ -25,7 +25,7 @@ public class GreetVerticle extends AbstractVerticle {
   public void start(Promise<Void> startPromise) throws Exception {
     String tag = "start";
 
-    eventBus.consumer(AppConstants.Event.Greeting.value, greetingController::eventSendHelloUser);
+    eventBus.consumer(AppConstants.Event.Greet.value, greetingController::eventSendHelloUser);
 
     logger.info("[{}] GreetingVerticle started.", tag);
     startPromise.complete();
