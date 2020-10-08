@@ -1,7 +1,6 @@
 package com.anasdidi.bot.domain.greeting;
 
 import com.anasdidi.bot.MainVerticle;
-import com.anasdidi.bot.common.AppConfig;
 import com.anasdidi.bot.common.AppConstants;
 
 import org.junit.jupiter.api.Assertions;
@@ -13,13 +12,9 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxTestContext;
 import io.vertx.reactivex.core.Vertx;
-import io.vertx.reactivex.ext.web.client.WebClient;
-import io.vertx.reactivex.ext.web.client.predicate.ResponsePredicate;
 
 @ExtendWith(VertxExtension.class)
 public class TestGreetingVerticle {
-
-  private String requestURI = "/bot";
 
   @BeforeEach
   void deploy_verticle(Vertx vertx, VertxTestContext testContext) {
@@ -28,31 +23,23 @@ public class TestGreetingVerticle {
 
   @Test
   void testGetGreetingSuccess(Vertx vertx, VertxTestContext testContext) throws Exception {
-    AppConfig appConfig = AppConfig.instance();
-    WebClient webClient = WebClient.create(vertx);
-    JsonObject body = new JsonObject()//
+    String testValue = "" + System.currentTimeMillis();
+    JsonObject requestBody = new JsonObject()//
         .put("message", new JsonObject()//
             .put("text", AppConstants.Event.Greeting.value)//
             .put("from", new JsonObject()//
-                .put("id", System.currentTimeMillis())));
+                .put("first_name", "first_name:" + testValue)//
+                .put("id", 000)));
 
-    webClient.post(appConfig.getAppPort(), appConfig.getAppHost(), requestURI)//
-        .expect(ResponsePredicate.SC_OK).expect(ResponsePredicate.JSON).rxSendJsonObject(body).subscribe(response -> {
-          testContext.verify(() -> {
-            JsonObject responseBody = response.bodyAsJsonObject();
-            Assertions.assertNotNull(responseBody);
+    vertx.eventBus().rxRequest(AppConstants.Event.Greeting.value, requestBody.encode()).subscribe(response -> {
+      testContext.verify(() -> {
+        JsonObject responseBody = new JsonObject((String) response.body());
+        Assertions.assertNotNull(responseBody);
+        Assertions.assertEquals(000, responseBody.getInteger("chat_id"));
+        Assertions.assertEquals("Hello, first_name:" + testValue, responseBody.getString("text"));
 
-            JsonObject status = responseBody.getJsonObject("status");
-            Assertions.assertNotNull(status);
-            Assertions.assertEquals(true, status.getBoolean("isSuccess"));
-            Assertions.assertEquals("Greeting received.", status.getString("message"));
-
-            JsonObject data = responseBody.getJsonObject("data");
-            Assertions.assertNotNull(data);
-            Assertions.assertEquals("Hello", data.getString("value"));
-
-            testContext.completeNow();
-          });
-        }, e -> testContext.failNow(e));
+        testContext.completeNow();
+      });
+    }, e -> testContext.failNow(e));
   }
 }

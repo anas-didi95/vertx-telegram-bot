@@ -70,11 +70,17 @@ public class MainVerticle extends AbstractVerticle {
       routingContext.response().end();
     }
 
-    eventBus.rxRequest(event, requestBody.encode()).subscribe(handler -> {
-      logger.info("[{}] Event success, event={}", tag, event);
+    eventBus.rxRequest(event, requestBody.encode()).subscribe(response -> {
+      if (logger.isDebugEnabled()) {
+        JsonObject responseBody = new JsonObject((String) response.body());
+        logger.debug("[{}:{}] responseBody\n{}", tag, requestId, responseBody.encodePrettily());
+      }
+      logger.info("[{}:{}] Event success, event={}", tag, requestId, event);
     }, e -> {
-      logger.error("[{}] Event failed, ", tag, e);
+      logger.error("[{}:{}] Event failed! event={}", tag, requestId, event);
+      logger.error(e);
     });
+
     routingContext.response().end();
   }
 }

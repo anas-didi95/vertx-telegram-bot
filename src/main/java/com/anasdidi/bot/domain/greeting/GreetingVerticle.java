@@ -26,44 +26,24 @@ public class GreetingVerticle extends AbstractVerticle {
     WebClient webClient = WebClient.create(vertx);
     AppConfig appConfig = AppConfig.instance();
 
-    eventBus.consumer(AppConstants.Event.Greeting.value, handler -> {
-      JsonObject request = new JsonObject((String) handler.body());
-      String tag = AppConstants.Event.Greeting.value + ":" + request.getString("requestId");
-
-      if (logger.isDebugEnabled()) {
-        logger.debug("[{}] request\n{}", tag, request.encodePrettily());
-      }
-
-      JsonObject response = new JsonObject()//
-          .put("status", new JsonObject()//
-              .put("isSuccess", true)//
-              .put("message", "Greeting received."))//
-          .put("data", new JsonObject()//
-              .put("value", "Hello"));
-
-      if (logger.isDebugEnabled()) {
-        logger.debug("[{}] response\n{}", tag, response.encodePrettily());
-      }
-
-      String message = response.encode();
-      logger.info("[{}] message={}", tag, message);
+    eventBus.consumer(AppConstants.Event.Greeting.value, request -> {
+      String tag = AppConstants.Event.Greeting.value;
+      JsonObject requestBody = new JsonObject((String) request.body());
+      String requestId = requestBody.getString("requestId");
 
       String requestURI = String.format("https://api.telegram.org/bot%s/sendMessage", appConfig.getTelegramToken());
-      JsonObject body = new JsonObject()//
-          .put("chat_id", request.getJsonObject("message").getJsonObject("from").getValue("id"))//
-          .put("text", "/Hello");
-      if (logger.isDebugEnabled()) {
-        logger.debug("[{}] requestURI={}, body=\n{}", tag, requestURI, body.encodePrettily());
-      }
-
+      JsonObject responseBody = new JsonObject()//
+          .put("chat_id", requestBody.getJsonObject("message").getJsonObject("from").getInteger("id"))//
+          .put("text", "Hello, " + requestBody.getJsonObject("message").getJsonObject("from").getString("first_name"));
       webClient.postAbs(requestURI)//
           .putHeader(AppConstants.Header.ContentType.value, AppConstants.MediaType.AppJson.value)//
-          .rxSendJsonObject(body).subscribe(response1 -> {
-            logger.info("[{}] Sent successfully", tag);
+          .rxSendJsonObject(responseBody).subscribe(response -> {
+            logger.info("[{}:{}] Sent successfully", tag, requestId);
           }, e -> {
-            logger.error("[{}] Sent failed!, {}", tag, e);
+            logger.error("[{}:{}] Sent failed!", tag, requestId);
+            logger.error(e);
           });
-      handler.reply(message);
+      request.reply(responseBody.encode());
     });
   }
 }

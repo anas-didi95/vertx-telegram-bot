@@ -1,6 +1,7 @@
 @host=api.telegram.org/bot
 @token={{$processEnv TELEGRAM_TOKEN}}
 @url = {{host}}{{token}}
+@webhookUrl = https://1c6937723e82.ngrok.io/bot
 
 // @name getMe
 GET https://{{url}}/getMe
@@ -17,5 +18,5 @@ POST https://{{url}}/setWebhook
 Content-Type: application/json
 
 {
-  "url": "https://776bc19c9ffe.ngrok.io/bot",
+  "url": "{{webhookUrl}}"
 }
