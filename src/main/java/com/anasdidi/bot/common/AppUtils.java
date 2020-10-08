@@ -2,6 +2,8 @@ package com.anasdidi.bot.common;
 
 import java.util.UUID;
 
+import io.vertx.core.json.JsonObject;
+
 public class AppUtils {
 
   public static String generateId() {
@@ -13,5 +15,11 @@ public class AppUtils {
     String token = AppConfig.instance().getTelegramToken();
 
     return String.format(urlTemplate, token, method.value);
+  }
+
+  public static JsonObject getTelegramSendMessageBody(int chatId, String text) {
+    return new JsonObject()//
+        .put("chat_id", chatId)//
+        .put("text", text);
   }
 }

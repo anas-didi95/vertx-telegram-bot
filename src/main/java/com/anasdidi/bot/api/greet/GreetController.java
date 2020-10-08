@@ -27,9 +27,8 @@ public class GreetController {
 
     TelegramVO vo = new TelegramVO(requestBody);
     String telegramUrl = AppUtils.getTelegramUrl(AppConstants.TelegramMethod.SendMessage);
-    JsonObject responseBody = new JsonObject()//
-        .put("chat_id", vo.getMessageFromId())//
-        .put("text", "Hello, " + vo.getMessageFromFirstname());
+    JsonObject responseBody = AppUtils.getTelegramSendMessageBody(vo.getMessageFromId(),
+        "Hello, " + vo.getMessageFromFirstname());
     webClient.postAbs(telegramUrl)//
         .putHeader(AppConstants.Header.ContentType.value, AppConstants.MediaType.AppJson.value)//
         .rxSendJsonObject(responseBody).subscribe(response -> {
