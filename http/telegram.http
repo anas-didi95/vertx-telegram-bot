@@ -1,6 +1,7 @@
 @host=api.telegram.org/bot
 @token={{$processEnv TELEGRAM_TOKEN}}
 @url = {{host}}{{token}}
+@webhookUrl = https://1c6937723e82.ngrok.io/bot
 
 // @name getMe
 GET https://{{url}}/getMe
@@ -12,13 +13,10 @@ GET https://{{url}}/getWebhookInfo
 
 ###
 
-@chatId = {{getMe.response.body.$.result.id}}
-
-// @name sendMessage
-POST https://{{url}}/sendMessage
+// @name setWebhook
+POST https://{{url}}/setWebhook
 Content-Type: application/json
 
 {
-  "chat_id": "{{chatId}}",
-  "text": "Hello world"
+  "url": "{{webhookUrl}}"
 }

@@ -1,9 +1,9 @@
 package com.anasdidi.bot;
 
+import com.anasdidi.bot.api.greet.GreetVerticle;
 import com.anasdidi.bot.common.AppConfig;
 import com.anasdidi.bot.common.AppConstants;
 import com.anasdidi.bot.common.AppUtils;
-import com.anasdidi.bot.domain.greeting.GreetingVerticle;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -17,12 +17,14 @@ import io.vertx.reactivex.core.AbstractVerticle;
 import io.vertx.reactivex.core.eventbus.EventBus;
 import io.vertx.reactivex.ext.web.Router;
 import io.vertx.reactivex.ext.web.RoutingContext;
+import io.vertx.reactivex.ext.web.client.WebClient;
 import io.vertx.reactivex.ext.web.handler.BodyHandler;
 
 public class MainVerticle extends AbstractVerticle {
 
   private static final Logger logger = LogManager.getLogger(MainVerticle.class);
   private EventBus eventBus;
+  private WebClient webClient;
 
   @Override
   public void start(Promise<Void> startPromise) throws Exception {
@@ -38,9 +40,12 @@ public class MainVerticle extends AbstractVerticle {
       router.route().handler(BodyHandler.create());
       router.route().handler(routingContext -> routingContext.put("requestId", AppUtils.generateId()).next());
       router.post("/").handler(this::requestHandler);
+      router.get("/test")
+          .handler(routingContext -> routingContext.response().end(new JsonObject().put("ok", true).encode()));
 
       this.eventBus = vertx.eventBus();
-      vertx.deployVerticle(new GreetingVerticle(eventBus));
+      this.webClient = WebClient.create(vertx);
+      vertx.deployVerticle(new GreetVerticle(eventBus, webClient));
 
       Router contextPath = Router.router(vertx).mountSubRouter("/bot", router);
       int port = appConfig.getAppPort();
@@ -63,23 +68,22 @@ public class MainVerticle extends AbstractVerticle {
     }
 
     String event = requestBody.getJsonObject("message").getString("text");
-    eventBus.rxRequest(event, requestBody.encode()).subscribe(handler -> {
-      JsonObject response = new JsonObject((String) handler.body());
-      routingContext.response()//
-          .setStatusCode(200)//
-          .putHeader(AppConstants.Header.ContentType.value, AppConstants.MediaType.AppJson.value)//
-          .end(response.encode());
+
+    if (!AppConstants.Event.Greeting.value.equals(event)) {
+      routingContext.response().end();
+    }
+
+    eventBus.rxRequest(event, requestBody.encode()).subscribe(response -> {
+      if (logger.isDebugEnabled()) {
+        JsonObject responseBody = new JsonObject((String) response.body());
+        logger.debug("[{}:{}] responseBody\n{}", tag, requestId, responseBody.encodePrettily());
+      }
+      logger.info("[{}:{}] Event success, event={}", tag, requestId, event);
     }, e -> {
-      logger.error("[{}] onError : e={}", tag, e);
-      JsonObject response = new JsonObject()//
-          .put("status", new JsonObject()//
-              .put("isSuccess", false)//
-              .put("message", "Get greeting failed!"))//
-          .put("error", e.getMessage());
-      routingContext.response()//
-          .setStatusCode(400)//
-          .putHeader(AppConstants.Header.ContentType.value, AppConstants.MediaType.AppJson.value)//
-          .end(response.encode());
+      logger.error("[{}:{}] Event failed! event={}", tag, requestId, event);
+      logger.error(e);
     });
+
+    routingContext.response().end();
   }
 }
