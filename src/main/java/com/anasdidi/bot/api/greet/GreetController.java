@@ -1,8 +1,8 @@
 package com.anasdidi.bot.api.greet;
 
-import com.anasdidi.bot.common.AppConfig;
 import com.anasdidi.bot.common.AppConstants;
 import com.anasdidi.bot.common.AppUtils;
+import com.anasdidi.bot.common.TelegramVO;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -25,10 +25,11 @@ public class GreetController {
     JsonObject requestBody = new JsonObject((String) request.body());
     String requestId = requestBody.getString("requestId");
 
+    TelegramVO vo = new TelegramVO(requestBody);
     String telegramUrl = AppUtils.getTelegramUrl(AppConstants.TelegramMethod.SendMessage);
     JsonObject responseBody = new JsonObject()//
-        .put("chat_id", requestBody.getJsonObject("message").getJsonObject("from").getInteger("id"))//
-        .put("text", "Hello, " + requestBody.getJsonObject("message").getJsonObject("from").getString("first_name"));
+        .put("chat_id", vo.getMessageFromId())//
+        .put("text", "Hello, " + vo.getMessageFromFirstname());
     webClient.postAbs(telegramUrl)//
         .putHeader(AppConstants.Header.ContentType.value, AppConstants.MediaType.AppJson.value)//
         .rxSendJsonObject(responseBody).subscribe(response -> {
