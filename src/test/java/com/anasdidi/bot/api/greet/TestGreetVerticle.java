@@ -1,4 +1,4 @@
-package com.anasdidi.bot.domain.greeting;
+package com.anasdidi.bot.api.greet;
 
 import com.anasdidi.bot.MainVerticle;
 import com.anasdidi.bot.common.AppConstants;
@@ -14,7 +14,7 @@ import io.vertx.junit5.VertxTestContext;
 import io.vertx.reactivex.core.Vertx;
 
 @ExtendWith(VertxExtension.class)
-public class TestGreetingVerticle {
+public class TestGreetVerticle {
 
   @BeforeEach
   void deploy_verticle(Vertx vertx, VertxTestContext testContext) {

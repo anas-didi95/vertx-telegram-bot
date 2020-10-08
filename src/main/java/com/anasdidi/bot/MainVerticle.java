@@ -1,9 +1,9 @@
 package com.anasdidi.bot;
 
+import com.anasdidi.bot.api.greet.GreetVerticle;
 import com.anasdidi.bot.common.AppConfig;
 import com.anasdidi.bot.common.AppConstants;
 import com.anasdidi.bot.common.AppUtils;
-import com.anasdidi.bot.domain.greeting.GreetingVerticle;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -45,7 +45,7 @@ public class MainVerticle extends AbstractVerticle {
 
       this.eventBus = vertx.eventBus();
       this.webClient = WebClient.create(vertx);
-      vertx.deployVerticle(new GreetingVerticle(eventBus, webClient));
+      vertx.deployVerticle(new GreetVerticle(eventBus, webClient));
 
       Router contextPath = Router.router(vertx).mountSubRouter("/bot", router);
       int port = appConfig.getAppPort();

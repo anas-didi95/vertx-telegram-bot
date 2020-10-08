@@ -1,4 +1,4 @@
-package com.anasdidi.bot.domain.greeting;
+package com.anasdidi.bot.api.greet;
 
 import com.anasdidi.bot.common.AppConfig;
 import com.anasdidi.bot.common.AppConstants;
@@ -10,12 +10,12 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.reactivex.core.eventbus.Message;
 import io.vertx.reactivex.ext.web.client.WebClient;
 
-public class GreetingController {
+public class GreetController {
 
-  private static final Logger logger = LogManager.getLogger(GreetingController.class);
+  private static final Logger logger = LogManager.getLogger(GreetController.class);
   private final WebClient webClient;
 
-  GreetingController(WebClient webClient) {
+  GreetController(WebClient webClient) {
     this.webClient = webClient;
   }
 
