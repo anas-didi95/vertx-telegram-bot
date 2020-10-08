@@ -14,20 +14,20 @@ public class GreetVerticle extends AbstractVerticle {
 
   private static final Logger logger = LogManager.getLogger(GreetVerticle.class);
   private final EventBus eventBus;
-  private final GreetController greetingController;
+  private final GreetController greetController;
 
   public GreetVerticle(EventBus eventBus, WebClient webClient) {
     this.eventBus = eventBus;
-    this.greetingController = new GreetController(webClient);
+    this.greetController = new GreetController(webClient);
   }
 
   @Override
   public void start(Promise<Void> startPromise) throws Exception {
     String tag = "start";
 
-    eventBus.consumer(AppConstants.Event.Greeting.value, greetingController::eventSendHelloUser);
+    eventBus.consumer(AppConstants.Event.Greet.value, greetController::eventSendHelloUser);
 
-    logger.info("[{}] GreetingVerticle started.", tag);
+    logger.info("[{}] GreetVerticle started.", tag);
     startPromise.complete();
   }
 }

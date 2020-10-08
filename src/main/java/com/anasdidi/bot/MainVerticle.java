@@ -58,18 +58,18 @@ public class MainVerticle extends AbstractVerticle {
   }
 
   private void requestHandler(RoutingContext routingContext) {
+    String tag = "requestHandler";
     String requestId = routingContext.get("requestId");
-    String tag = "requestHandler:" + requestId;
     JsonObject requestBody = routingContext.getBodyAsJson()//
         .put("requestId", requestId);
 
     if (logger.isDebugEnabled()) {
-      logger.debug("[{}] requestBody\n{}", tag, requestBody.encodePrettily());
+      logger.debug("[{}:{}] requestBody\n{}", tag, requestId, requestBody.encodePrettily());
     }
 
     String event = requestBody.getJsonObject("message").getString("text");
 
-    if (!AppConstants.Event.Greeting.value.equals(event)) {
+    if (!AppConstants.Event.Greet.value.equals(event)) {
       routingContext.response().end();
     }
 
