@@ -2,5 +2,5 @@
 @port = 5000
 @hostname = {{host}}:{{port}}
 
-// @name main
-GET http://{{hostname}}
+// @name ping
+GET http://{{hostname}}/bot/ping
