@@ -40,9 +40,13 @@ public class MainVerticle extends AbstractVerticle {
       logger.info("{} appConfig\n{}", TAG, appConfig.toString());
 
       HealthCheckHandler healthCheckHandler = HealthCheckHandler.create(vertx);
-      healthCheckHandler.register("server-uptime", procedure -> procedure.complete(Status.OK(new JsonObject()//
-          .put("startTime", serverStartTime + "ms")
-          .put("uptime", (System.currentTimeMillis() - serverStartTime) + "ms"))));
+      healthCheckHandler.register("server-uptime", procedure -> {
+        long duration = System.currentTimeMillis() - serverStartTime;
+        procedure.complete(Status.OK(new JsonObject()//
+            .put("startTime", serverStartTime + "ms")//
+            .put("uptime", duration + "ms")//
+            .put("formatted", AppUtils.getFormattedServerUptime(duration))));
+      });
 
       Router router = Router.router(vertx);
       router.route().handler(BodyHandler.create());
