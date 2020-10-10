@@ -12,9 +12,11 @@ import io.vertx.config.ConfigRetrieverOptions;
 import io.vertx.config.ConfigStoreOptions;
 import io.vertx.core.Promise;
 import io.vertx.core.json.JsonObject;
+import io.vertx.ext.healthchecks.Status;
 import io.vertx.reactivex.config.ConfigRetriever;
 import io.vertx.reactivex.core.AbstractVerticle;
 import io.vertx.reactivex.core.eventbus.EventBus;
+import io.vertx.reactivex.ext.healthchecks.HealthCheckHandler;
 import io.vertx.reactivex.ext.web.Router;
 import io.vertx.reactivex.ext.web.RoutingContext;
 import io.vertx.reactivex.ext.web.client.WebClient;
@@ -23,6 +25,7 @@ import io.vertx.reactivex.ext.web.handler.BodyHandler;
 public class MainVerticle extends AbstractVerticle {
 
   private static final Logger logger = LogManager.getLogger(MainVerticle.class);
+  private static final long serverStartTime = System.currentTimeMillis();
   private EventBus eventBus;
   private WebClient webClient;
 
@@ -36,10 +39,16 @@ public class MainVerticle extends AbstractVerticle {
       AppConfig appConfig = AppConfig.create(config);
       logger.info("{} appConfig\n{}", TAG, appConfig.toString());
 
+      HealthCheckHandler healthCheckHandler = HealthCheckHandler.create(vertx);
+      healthCheckHandler.register("server-uptime", procedure -> procedure.complete(Status.OK(new JsonObject()//
+          .put("startTime", serverStartTime + "ms")
+          .put("uptime", (System.currentTimeMillis() - serverStartTime) + "ms"))));
+
       Router router = Router.router(vertx);
       router.route().handler(BodyHandler.create());
       router.route().handler(routingContext -> routingContext.put("requestId", AppUtils.generateId()).next());
       router.post("/").handler(this::requestHandler);
+      router.get("/ping").handler(healthCheckHandler);
       router.get("/test")
           .handler(routingContext -> routingContext.response().end(new JsonObject().put("ok", true).encode()));
 
