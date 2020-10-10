@@ -51,4 +51,14 @@ public class AppConstants {
       this.value = value;
     }
   }
+
+  public enum TimeConversion {
+    SecToMs(1000), MinToMs(1000 * 60), HourToMs(1000 * 60 * 60), DayToMs(1000 * 60 * 60 * 24);
+
+    public long value;
+
+    private TimeConversion(long value) {
+      this.value = value;
+    }
+  }
 }
