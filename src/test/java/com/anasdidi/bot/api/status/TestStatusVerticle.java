@@ -1,6 +1,7 @@
 package com.anasdidi.bot.api.status;
 
 import com.anasdidi.bot.MainVerticle;
+import com.anasdidi.bot.common.AppConstants;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,12 +22,12 @@ public class TestStatusVerticle {
   }
 
   @Test
-  void testCommandStatusSuccess(Vertx vertx, VertxTestContext testContext) {
+  void testGetStatusSuccess(Vertx vertx, VertxTestContext testContext) {
     JsonObject requestBody = new JsonObject()//
         .put("message", new JsonObject()//
-            .put("text", "/status"));
+            .put("text", AppConstants.Event.Status.value));
 
-    vertx.eventBus().rxRequest("/status", requestBody.encode()).subscribe(response -> {
+    vertx.eventBus().rxRequest(AppConstants.Event.Status.value, requestBody.encode()).subscribe(response -> {
       testContext.verify(() -> {
         JsonObject responseBody = new JsonObject((String) response.body());
         Assertions.assertNotNull(responseBody);
