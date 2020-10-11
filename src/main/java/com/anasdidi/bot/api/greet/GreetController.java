@@ -11,7 +11,7 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.reactivex.core.eventbus.Message;
 import io.vertx.reactivex.ext.web.client.WebClient;
 
-public class GreetController {
+class GreetController {
 
   private static final Logger logger = LogManager.getLogger(GreetController.class);
   private final WebClient webClient;
