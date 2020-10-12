@@ -1,23 +1,22 @@
 package com.anasdidi.bot.api.greet;
 
 import com.anasdidi.bot.common.AppConstants;
-import com.anasdidi.bot.common.AppUtils;
 import com.anasdidi.bot.common.TelegramVO;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import io.vertx.core.json.JsonObject;
+import io.vertx.reactivex.core.eventbus.EventBus;
 import io.vertx.reactivex.core.eventbus.Message;
-import io.vertx.reactivex.ext.web.client.WebClient;
 
 class GreetController {
 
   private static final Logger logger = LogManager.getLogger(GreetController.class);
-  private final WebClient webClient;
+  private final EventBus eventBus;
 
-  GreetController(WebClient webClient) {
-    this.webClient = webClient;
+  GreetController(EventBus eventBus) {
+    this.eventBus = eventBus;
   }
 
   void eventSendHelloUser(Message<Object> request) {
@@ -26,18 +25,15 @@ class GreetController {
     String requestId = requestBody.getString("requestId");
 
     TelegramVO vo = new TelegramVO(requestBody);
-    String telegramUrl = AppUtils.getTelegramUrl(AppConstants.TelegramMethod.SendMessage);
-    JsonObject responseBody = AppUtils.getTelegramSendMessageBody(vo.getMessageFromId(),
-        "Hello, " + vo.getMessageFromFirstname());
-    webClient.postAbs(telegramUrl)//
-        .putHeader(AppConstants.Header.ContentType.value, AppConstants.MediaType.AppJson.value)//
-        .rxSendJsonObject(responseBody).subscribe(response -> {
-          logger.info("[{}:{}] Sent successfully", tag, requestId);
-        }, e -> {
-          logger.error("[{}:{}] Sent failed!", tag, requestId);
-          logger.error(e);
-        });
+    String response = "Hello, " + vo.getMessageFromFirstname();
 
-    request.reply(responseBody.encode());
+    if (logger.isDebugEnabled()) {
+      logger.debug("[{}:{}] response={}", tag, requestId, response);
+    }
+
+    requestBody.put("response", response);
+    eventBus.publish(AppConstants.TelegramMethod.SendMessage.value, requestBody.encode());
+
+    request.reply(requestBody.encode());
   }
 }

@@ -35,8 +35,9 @@ public class TestGreetVerticle {
       testContext.verify(() -> {
         JsonObject responseBody = new JsonObject((String) response.body());
         Assertions.assertNotNull(responseBody);
-        Assertions.assertEquals(000, responseBody.getInteger("chat_id"));
-        Assertions.assertEquals("Hello, first_name:" + testValue, responseBody.getString("text"));
+
+        String message = responseBody.getString("response");
+        Assertions.assertEquals("Hello, first_name:" + testValue, message);
 
         testContext.completeNow();
       });
