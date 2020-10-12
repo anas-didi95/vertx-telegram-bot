@@ -82,23 +82,30 @@ public class MainVerticle extends AbstractVerticle {
       logger.debug("[{}:{}] requestBody\n{}", tag, requestId, requestBody.encodePrettily());
     }
 
-    String event = requestBody.getJsonObject("message").getString("text");
+    String messageText = requestBody.getJsonObject("message").getString("text");
+    String event = messageText.split(" ")[0];
 
-    if (!AppConstants.Event.Greet.value.equals(event)) {
-      routingContext.response().end();
+    boolean hasFound = false;
+    for (AppConstants.Event e : AppConstants.Event.values()) {
+      hasFound = hasFound || e.value.equals(event);
     }
 
-    eventBus.rxRequest(event, requestBody.encode()).subscribe(response -> {
-      if (logger.isDebugEnabled()) {
-        JsonObject responseBody = new JsonObject((String) response.body());
-        logger.debug("[{}:{}] responseBody\n{}", tag, requestId, responseBody.encodePrettily());
-      }
-      logger.info("[{}:{}] Event success, event={}", tag, requestId, event);
-    }, e -> {
-      logger.error("[{}:{}] Event failed! event={}", tag, requestId, event);
-      logger.error(e);
-    });
+    if (!hasFound) {
+      logger.error("[{}:{}] Event is undefined! event={}", tag, requestId, event);
+      routingContext.response().end();
+    } else {
+      eventBus.rxRequest(event, requestBody.encode()).subscribe(response -> {
+        if (logger.isDebugEnabled()) {
+          JsonObject responseBody = new JsonObject((String) response.body());
+          logger.debug("[{}:{}] responseBody\n{}", tag, requestId, responseBody.encodePrettily());
+        }
+        logger.info("[{}:{}] Event success, event={}", tag, requestId, event);
+      }, e -> {
+        logger.error("[{}:{}] Event failed! event={}", tag, requestId, event);
+        logger.error(e);
+      });
 
-    routingContext.response().end();
+      routingContext.response().end();
+    }
   }
 }

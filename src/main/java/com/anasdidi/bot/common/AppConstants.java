@@ -61,4 +61,14 @@ public class AppConstants {
       this.value = value;
     }
   }
+
+  public enum Emoji {
+    Tick("✅"), Cross("❌");
+
+    public final String value;
+
+    private Emoji(String value) {
+      this.value = value;
+    }
+  }
 }
