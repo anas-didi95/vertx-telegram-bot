@@ -1,6 +1,8 @@
 package com.anasdidi.bot.api.status;
 
 import com.anasdidi.bot.common.AppConstants;
+import com.anasdidi.bot.common.AppUtils;
+import com.anasdidi.bot.common.TelegramVO;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -39,9 +41,31 @@ class StatusController {
       }
 
       return new JsonObject()//
-          .put("security", securityBody.getString("outcome"))//
-          .put("bot", botBody.getString("outcome"));
+          .put("security", securityBody.getString("outcome").equals("UP"))//
+          .put("bot", botBody.getString("outcome").equals("UP"));
     }).subscribe(responseBody -> {
+      TelegramVO vo = new TelegramVO(requestBody);
+      String telegramUrl = AppUtils.getTelegramUrl(AppConstants.TelegramMethod.SendMessage);
+      String messageContent = new StringBuilder()//
+          .append("Server status\n")//
+          .append("\n")//
+          .append("security: ")
+          .append(responseBody.getBoolean("security") ? AppConstants.Emoji.Tick.value : AppConstants.Emoji.Cross.value)
+          .append("\n")//
+          .append("bot: ")
+          .append(responseBody.getBoolean("bot") ? AppConstants.Emoji.Tick.value : AppConstants.Emoji.Cross.value)//
+          .toString();
+      JsonObject messageBody = AppUtils.getTelegramSendMessageBody(vo.getMessageFromId(), messageContent);
+
+      webClient.postAbs(telegramUrl)//
+          .putHeader(AppConstants.Header.ContentType.value, AppConstants.MediaType.AppJson.value)//
+          .rxSendJsonObject(messageBody).subscribe(response -> {
+            logger.info("[{}:{}] Sent successfully", tag, requestId);
+          }, e -> {
+            logger.error("[{}:{}] Sent failed!", tag, requestId);
+            logger.error(e);
+          });
+
       request.reply(responseBody.encode());
     });
   }
