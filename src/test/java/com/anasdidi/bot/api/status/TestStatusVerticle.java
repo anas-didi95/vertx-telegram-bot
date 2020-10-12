@@ -34,11 +34,14 @@ public class TestStatusVerticle {
         JsonObject responseBody = new JsonObject((String) response.body());
         Assertions.assertNotNull(responseBody);
 
-        boolean security = responseBody.getBoolean("security");
-        Assertions.assertEquals(true, security);
-
-        boolean bot = responseBody.getBoolean("bot");
-        Assertions.assertEquals(true, bot);
+        String messageExpected = new StringBuilder()//
+            .append("Server status\n")//
+            .append("\n")//
+            .append("security: ").append(AppConstants.Emoji.Tick.value).append("\n")//
+            .append("bot: ").append(AppConstants.Emoji.Tick.value)//
+            .toString();
+        String message = responseBody.getString("response");
+        Assertions.assertEquals(messageExpected, message);
 
         testContext.completeNow();
       });
