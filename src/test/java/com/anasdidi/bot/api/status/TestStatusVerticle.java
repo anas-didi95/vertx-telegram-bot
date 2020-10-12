@@ -25,18 +25,20 @@ public class TestStatusVerticle {
   void testGetStatusSuccess(Vertx vertx, VertxTestContext testContext) {
     JsonObject requestBody = new JsonObject()//
         .put("message", new JsonObject()//
-            .put("text", AppConstants.Event.Status.value));
+            .put("text", AppConstants.Event.Status.value)//
+            .put("from", new JsonObject()//
+                .put("id", 000)));
 
     vertx.eventBus().rxRequest(AppConstants.Event.Status.value, requestBody.encode()).subscribe(response -> {
       testContext.verify(() -> {
         JsonObject responseBody = new JsonObject((String) response.body());
         Assertions.assertNotNull(responseBody);
 
-        String security = responseBody.getString("security");
-        Assertions.assertEquals("UP", security);
+        boolean security = responseBody.getBoolean("security");
+        Assertions.assertEquals(true, security);
 
-        String bot = responseBody.getString("bot");
-        Assertions.assertEquals("UP", bot);
+        boolean bot = responseBody.getBoolean("bot");
+        Assertions.assertEquals(true, bot);
 
         testContext.completeNow();
       });
