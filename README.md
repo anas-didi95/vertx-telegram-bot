@@ -1,6 +1,7 @@
 # Telegram Bot Microservice
 
 [![Logo](https://img.shields.io/badge/vert.x-3.9.3-purple.svg)](https://vertx.io")
+![deploy](https://github.com/anas-didi95/vertx-telegram-bot/workflows/deploy/badge.svg?branch=main)
 
 This application was generated using http://start.vertx.io
 
