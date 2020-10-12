@@ -1,8 +1,6 @@
 package com.anasdidi.bot.api.status;
 
 import com.anasdidi.bot.common.AppConstants;
-import com.anasdidi.bot.common.AppUtils;
-import com.anasdidi.bot.common.TelegramVO;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -10,6 +8,7 @@ import org.apache.logging.log4j.Logger;
 import io.reactivex.Single;
 import io.vertx.core.json.JsonObject;
 import io.vertx.reactivex.core.buffer.Buffer;
+import io.vertx.reactivex.core.eventbus.EventBus;
 import io.vertx.reactivex.core.eventbus.Message;
 import io.vertx.reactivex.ext.web.client.HttpResponse;
 import io.vertx.reactivex.ext.web.client.WebClient;
@@ -18,9 +17,11 @@ class StatusController {
 
   private static final Logger logger = LogManager.getLogger(StatusController.class);
   private final WebClient webClient;
+  private final EventBus eventBus;
 
-  StatusController(WebClient webClient) {
+  StatusController(WebClient webClient, EventBus eventBus) {
     this.webClient = webClient;
+    this.eventBus = eventBus;
   }
 
   void eventGetStatus(Message<Object> request) {
@@ -44,9 +45,7 @@ class StatusController {
           .put("security", securityBody.getString("outcome").equals("UP"))//
           .put("bot", botBody.getString("outcome").equals("UP"));
     }).subscribe(responseBody -> {
-      TelegramVO vo = new TelegramVO(requestBody);
-      String telegramUrl = AppUtils.getTelegramUrl(AppConstants.TelegramMethod.SendMessage);
-      String messageContent = new StringBuilder()//
+      String message = new StringBuilder()//
           .append("Server status\n")//
           .append("\n")//
           .append("security: ")
@@ -55,18 +54,11 @@ class StatusController {
           .append("bot: ")
           .append(responseBody.getBoolean("bot") ? AppConstants.Emoji.Tick.value : AppConstants.Emoji.Cross.value)//
           .toString();
-      JsonObject messageBody = AppUtils.getTelegramSendMessageBody(vo.getMessageFromId(), messageContent);
 
-      webClient.postAbs(telegramUrl)//
-          .putHeader(AppConstants.Header.ContentType.value, AppConstants.MediaType.AppJson.value)//
-          .rxSendJsonObject(messageBody).subscribe(response -> {
-            logger.info("[{}:{}] Sent successfully", tag, requestId);
-          }, e -> {
-            logger.error("[{}:{}] Sent failed!", tag, requestId);
-            logger.error(e);
-          });
+      requestBody.put("response", message);
+      eventBus.publish(AppConstants.TelegramMethod.SendMessage.value, requestBody.encode());
 
-      request.reply(responseBody.encode());
+      request.reply(requestBody.encode());
     });
   }
 

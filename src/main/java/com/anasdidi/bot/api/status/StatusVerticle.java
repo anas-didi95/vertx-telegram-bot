@@ -16,7 +16,7 @@ public class StatusVerticle extends AbstractVerticle {
 
   public StatusVerticle(EventBus eventBus, WebClient webClient) {
     this.eventBus = eventBus;
-    statusController = new StatusController(webClient);
+    statusController = new StatusController(webClient, eventBus);
   }
 
   @Override

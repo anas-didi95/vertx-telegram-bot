@@ -2,6 +2,7 @@ package com.anasdidi.bot;
 
 import com.anasdidi.bot.api.greet.GreetVerticle;
 import com.anasdidi.bot.api.status.StatusVerticle;
+import com.anasdidi.bot.api.telegram.TelegramVerticle;
 import com.anasdidi.bot.common.AppConfig;
 import com.anasdidi.bot.common.AppConstants;
 import com.anasdidi.bot.common.AppUtils;
@@ -61,6 +62,7 @@ public class MainVerticle extends AbstractVerticle {
       this.webClient = WebClient.create(vertx);
       vertx.deployVerticle(new GreetVerticle(eventBus, webClient));
       vertx.deployVerticle(new StatusVerticle(eventBus, webClient));
+      vertx.deployVerticle(new TelegramVerticle(eventBus, webClient));
 
       Router contextPath = Router.router(vertx).mountSubRouter("/bot", router);
       int port = appConfig.getAppPort();
