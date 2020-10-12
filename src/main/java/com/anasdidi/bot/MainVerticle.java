@@ -60,7 +60,7 @@ public class MainVerticle extends AbstractVerticle {
 
       this.eventBus = vertx.eventBus();
       this.webClient = WebClient.create(vertx);
-      vertx.deployVerticle(new GreetVerticle(eventBus, webClient));
+      vertx.deployVerticle(new GreetVerticle(eventBus));
       vertx.deployVerticle(new StatusVerticle(eventBus, webClient));
       vertx.deployVerticle(new TelegramVerticle(eventBus, webClient));
 

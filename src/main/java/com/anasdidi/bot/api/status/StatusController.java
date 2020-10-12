@@ -44,18 +44,22 @@ class StatusController {
       return new JsonObject()//
           .put("security", securityBody.getString("outcome").equals("UP"))//
           .put("bot", botBody.getString("outcome").equals("UP"));
-    }).subscribe(responseBody -> {
-      String message = new StringBuilder()//
+    }).subscribe(result -> {
+      String response = new StringBuilder()//
           .append("Server status\n")//
           .append("\n")//
           .append("security: ")
-          .append(responseBody.getBoolean("security") ? AppConstants.Emoji.Tick.value : AppConstants.Emoji.Cross.value)
+          .append(result.getBoolean("security") ? AppConstants.Emoji.Tick.value : AppConstants.Emoji.Cross.value)
           .append("\n")//
           .append("bot: ")
-          .append(responseBody.getBoolean("bot") ? AppConstants.Emoji.Tick.value : AppConstants.Emoji.Cross.value)//
+          .append(result.getBoolean("bot") ? AppConstants.Emoji.Tick.value : AppConstants.Emoji.Cross.value)//
           .toString();
 
-      requestBody.put("response", message);
+      if (logger.isDebugEnabled()) {
+        logger.debug("[{}:{}] response={}", tag, requestId, response);
+      }
+
+      requestBody.put("response", response);
       eventBus.publish(AppConstants.TelegramMethod.SendMessage.value, requestBody.encode());
 
       request.reply(requestBody.encode());
