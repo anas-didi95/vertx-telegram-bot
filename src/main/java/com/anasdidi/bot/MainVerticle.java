@@ -1,5 +1,8 @@
 package com.anasdidi.bot;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import com.anasdidi.bot.api.greet.GreetVerticle;
 import com.anasdidi.bot.api.status.StatusVerticle;
 import com.anasdidi.bot.api.telegram.TelegramVerticle;
@@ -13,6 +16,7 @@ import org.apache.logging.log4j.Logger;
 import io.vertx.config.ConfigRetrieverOptions;
 import io.vertx.config.ConfigStoreOptions;
 import io.vertx.core.Promise;
+import io.vertx.core.http.HttpMethod;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.healthchecks.Status;
 import io.vertx.reactivex.config.ConfigRetriever;
@@ -23,6 +27,7 @@ import io.vertx.reactivex.ext.web.Router;
 import io.vertx.reactivex.ext.web.RoutingContext;
 import io.vertx.reactivex.ext.web.client.WebClient;
 import io.vertx.reactivex.ext.web.handler.BodyHandler;
+import io.vertx.reactivex.ext.web.handler.CorsHandler;
 
 public class MainVerticle extends AbstractVerticle {
 
@@ -51,6 +56,7 @@ public class MainVerticle extends AbstractVerticle {
       });
 
       Router router = Router.router(vertx);
+      router.route().handler(setupCorsHandler());
       router.route().handler(BodyHandler.create());
       router.route().handler(routingContext -> routingContext.put("requestId", AppUtils.generateId()).next());
       router.post("/").handler(this::requestHandler);
@@ -109,5 +115,19 @@ public class MainVerticle extends AbstractVerticle {
 
       routingContext.response().end();
     }
+  }
+
+  CorsHandler setupCorsHandler() {
+    Set<String> headerNames = new HashSet<>();
+    headerNames.add("Accept");
+    headerNames.add("Content-Type");
+
+    Set<HttpMethod> methods = new HashSet<>();
+    methods.add(HttpMethod.GET);
+    methods.add(HttpMethod.POST);
+
+    return CorsHandler.create("*")//
+        .allowedHeaders(headerNames)//
+        .allowedMethods(methods);
   }
 }
