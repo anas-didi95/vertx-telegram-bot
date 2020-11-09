@@ -31,7 +31,7 @@ class StatusController {
 
     Single<HttpResponse<Buffer>> securityPing = webClient.getAbs(StatusConstants.ServerPing.Security.value).rxSend();
     Single<HttpResponse<Buffer>> botPing = webClient.getAbs(StatusConstants.ServerPing.Bot.value).rxSend();
-    Single<HttpResponse<Buffer>> budgetPing = webClient.getAbs("https://api.anasdidi.dev/budget/ping").rxSend();
+    Single<HttpResponse<Buffer>> budgetPing = webClient.getAbs(StatusConstants.ServerPing.Budget.value).rxSend();
 
     Single.zip(securityPing, botPing, budgetPing, (security, bot, budget) -> {
       JsonObject securityBody = security.bodyAsJsonObject();
