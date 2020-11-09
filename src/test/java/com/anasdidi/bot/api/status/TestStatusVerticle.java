@@ -38,7 +38,8 @@ public class TestStatusVerticle {
             .append("Server status\n")//
             .append("\n")//
             .append("security: ").append(AppConstants.Emoji.Tick.value).append("\n")//
-            .append("bot: ").append(AppConstants.Emoji.Tick.value)//
+            .append("bot: ").append(AppConstants.Emoji.Tick.value).append("\n")//
+            .append("budget: ").append(AppConstants.Emoji.Tick.value)//
             .toString();
         String message = responseBody.getString("response");
         Assertions.assertEquals(messageExpected, message);
