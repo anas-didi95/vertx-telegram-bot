@@ -31,19 +31,23 @@ class StatusController {
 
     Single<HttpResponse<Buffer>> securityPing = webClient.getAbs(StatusConstants.ServerPing.Security.value).rxSend();
     Single<HttpResponse<Buffer>> botPing = webClient.getAbs(StatusConstants.ServerPing.Bot.value).rxSend();
+    Single<HttpResponse<Buffer>> budgetPing = webClient.getAbs(StatusConstants.ServerPing.Budget.value).rxSend();
 
-    Single.zip(securityPing, botPing, (security, bot) -> {
+    Single.zip(securityPing, botPing, budgetPing, (security, bot, budget) -> {
       JsonObject securityBody = security.bodyAsJsonObject();
       JsonObject botBody = bot.bodyAsJsonObject();
+      JsonObject budgetBody = budget.bodyAsJsonObject();
 
       if (logger.isDebugEnabled()) {
         logger.debug("[{}:{}] securityBody\n{}", tag, requestId, securityBody.encodePrettily());
         logger.debug("[{}:{}] botBody\n{}", tag, requestId, botBody.encodePrettily());
+        logger.debug("[{}:{}] budgetBody\n{}", tag, requestId, budgetBody.encodePrettily());
       }
 
       return new JsonObject()//
           .put("security", securityBody.getString("outcome").equals("UP"))//
-          .put("bot", botBody.getString("outcome").equals("UP"));
+          .put("bot", botBody.getString("outcome").equals("UP"))//
+          .put("budget", budgetBody.getString("outcome").equals("UP"));
     }).subscribe(result -> {
       String response = new StringBuilder()//
           .append("Server status\n")//
@@ -53,6 +57,9 @@ class StatusController {
           .append("\n")//
           .append("bot: ")
           .append(result.getBoolean("bot") ? AppConstants.Emoji.Tick.value : AppConstants.Emoji.Cross.value)//
+          .append("\n")//
+          .append("budget: ")
+          .append(result.getBoolean("budget") ? AppConstants.Emoji.Tick.value : AppConstants.Emoji.Cross.value)//
           .toString();
 
       if (logger.isDebugEnabled()) {
