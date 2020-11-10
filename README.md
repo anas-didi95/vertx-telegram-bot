@@ -1,6 +1,6 @@
 # Telegram Bot Microservice
 
-[![Logo](https://img.shields.io/badge/vert.x-3.9.3-purple.svg)](https://vertx.io")
+[![Logo](https://img.shields.io/badge/vert.x-3.9.4-purple.svg)](https://vertx.io")
 ![deploy](https://github.com/anas-didi95/vertx-telegram-bot/workflows/deploy/badge.svg?branch=main)
 ![build](https://github.com/anas-didi95/vertx-telegram-bot/workflows/build/badge.svg)
 
@@ -25,7 +25,7 @@ Back-end service which provides an interface for bot command using Telegram API.
 ---
 
 ## Technologies
-* Vert.x - Version 3.9.3
+* Vert.x - Version 3.9.4
 * Log4j2 - Version 2.13.3
 
 ---
