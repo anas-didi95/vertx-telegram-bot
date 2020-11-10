@@ -3,6 +3,7 @@ package com.anasdidi.bot;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.anasdidi.bot.api.expense.ExpenseVerticle;
 import com.anasdidi.bot.api.greet.GreetVerticle;
 import com.anasdidi.bot.api.status.StatusVerticle;
 import com.anasdidi.bot.api.telegram.TelegramVerticle;
@@ -69,6 +70,7 @@ public class MainVerticle extends AbstractVerticle {
       vertx.deployVerticle(new GreetVerticle(eventBus));
       vertx.deployVerticle(new StatusVerticle(eventBus, webClient));
       vertx.deployVerticle(new TelegramVerticle(eventBus, webClient));
+      vertx.deployVerticle(new ExpenseVerticle(eventBus));
 
       Router contextPath = Router.router(vertx).mountSubRouter("/bot", router);
       int port = appConfig.getAppPort();

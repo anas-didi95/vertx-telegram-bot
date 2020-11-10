@@ -1,7 +1,6 @@
 package com.anasdidi.bot.api.expense;
 
 import com.anasdidi.bot.MainVerticle;
-import com.anasdidi.bot.common.AppConstants;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
