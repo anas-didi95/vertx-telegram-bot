@@ -22,10 +22,13 @@ public class TestExpenseVerticle {
   }
 
   @Test
-  void testSaveStatusSuccess(Vertx vertx, VertxTestContext testContext) {
+  void testSaveExpenseSuccess(Vertx vertx, VertxTestContext testContext) {
+    String item = "programming book";
+    String price = "5";
+    String text = AppConstants.Event.Expense.value + " " + item + " " + price;
     JsonObject requestBody = new JsonObject()//
         .put("message", new JsonObject()//
-            .put("text", AppConstants.Event.Expense.value)//
+            .put("text", text)//
             .put("from", new JsonObject()//
                 .put("id", 000)));
 
@@ -35,7 +38,9 @@ public class TestExpenseVerticle {
         Assertions.assertNotNull(responseBody);
 
         String expectedMessage = new StringBuilder()//
-            .append("Budget saved")//
+            .append("Budget saved").append("\n")//
+            .append("- Item: ").append(item).append("\n")//
+            .append("- Price: ").append(price)//
             .toString();
         Assertions.assertEquals(expectedMessage, responseBody.getString("message"));
 
