@@ -1,5 +1,7 @@
 package com.anasdidi.bot.api.expense;
 
+import com.anasdidi.bot.common.AppConstants;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -21,7 +23,7 @@ public class ExpenseVerticle extends AbstractVerticle {
   public void start(Promise<Void> startPromise) throws Exception {
     final String TAG = "start";
 
-    eventBus.consumer("/expense").handler(request -> {
+    eventBus.consumer(AppConstants.Event.Expense.value).handler(request -> {
       JsonObject responseBody = new JsonObject()//
           .put("message", "Budget saved");
 

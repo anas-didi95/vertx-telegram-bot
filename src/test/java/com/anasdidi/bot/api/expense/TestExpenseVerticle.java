@@ -1,6 +1,7 @@
 package com.anasdidi.bot.api.expense;
 
 import com.anasdidi.bot.MainVerticle;
+import com.anasdidi.bot.common.AppConstants;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,11 +25,11 @@ public class TestExpenseVerticle {
   void testSaveStatusSuccess(Vertx vertx, VertxTestContext testContext) {
     JsonObject requestBody = new JsonObject()//
         .put("message", new JsonObject()//
-            .put("text", "/expense")//
+            .put("text", AppConstants.Event.Expense.value)//
             .put("from", new JsonObject()//
                 .put("id", 000)));
 
-    vertx.eventBus().rxRequest("/expense", requestBody).subscribe(response -> {
+    vertx.eventBus().rxRequest(AppConstants.Event.Expense.value, requestBody).subscribe(response -> {
       testContext.verify(() -> {
         JsonObject responseBody = (JsonObject) response.body();
         Assertions.assertNotNull(responseBody);
