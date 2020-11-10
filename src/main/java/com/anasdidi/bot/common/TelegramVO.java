@@ -17,4 +17,8 @@ public class TelegramVO {
   public String getMessageFromFirstname() {
     return json.getJsonObject("message").getJsonObject("from").getString("first_name");
   }
+
+  public String getMessageText() {
+    return json.getJsonObject("message").getString("text");
+  }
 }
