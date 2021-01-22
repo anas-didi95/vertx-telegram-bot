@@ -1,6 +1,4 @@
-@host = localhost
-@port = 5000
-@hostname = {{host}}:{{port}}
+@baseUrl = http://{{$processEnv APP_HOST}}:{{$processEnv APP_PORT}}/bot
 
 // @name ping
-GET http://{{hostname}}/bot/ping
+GET {{baseUrl}}/ping
