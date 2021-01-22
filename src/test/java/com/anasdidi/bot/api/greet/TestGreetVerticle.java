@@ -36,7 +36,7 @@ public class TestGreetVerticle {
       StringBuilder expectedMessage = new StringBuilder()//
           .append("Hello, first_name:" + testValueStr).append("\n")//
           .append("\n")//
-          .append("Telegram Id:").append("\n")//
+          .append("User Id:").append("\n")//
           .append(testValueInt);
 
       testContext.verify(() -> {

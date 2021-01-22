@@ -28,7 +28,7 @@ class GreetController {
     StringBuilder response = new StringBuilder()//
         .append("Hello, ").append(vo.getMessageFromFirstname()).append("\n")//
         .append("\n")//
-        .append("Telegram Id:").append("\n")//
+        .append("User Id:").append("\n")//
         .append(vo.getMessageFromId());
 
     if (logger.isDebugEnabled()) {
