@@ -25,13 +25,17 @@ class GreetController {
     String requestId = requestBody.getString("requestId");
 
     TelegramVO vo = new TelegramVO(requestBody);
-    String response = "Hello, " + vo.getMessageFromFirstname();
+    StringBuilder response = new StringBuilder()//
+        .append("Hello, ").append(vo.getMessageFromFirstname()).append("\n")//
+        .append("\n")//
+        .append("Telegram Id:").append("\n")//
+        .append(vo.getMessageFromId());
 
     if (logger.isDebugEnabled()) {
-      logger.debug("[{}:{}] response={}", tag, requestId, response);
+      logger.debug("[{}:{}] response={}", tag, requestId, response.toString());
     }
 
-    requestBody.put("response", response);
+    requestBody.put("response", response.toString());
     eventBus.publish(AppConstants.TelegramMethod.SendMessage.value, requestBody.encode());
 
     request.reply(requestBody.encode());
