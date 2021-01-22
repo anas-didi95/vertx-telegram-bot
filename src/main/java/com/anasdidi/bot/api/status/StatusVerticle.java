@@ -21,11 +21,11 @@ public class StatusVerticle extends AbstractVerticle {
 
   @Override
   public void start(Promise<Void> startPromise) throws Exception {
-    String tag = "start";
+    final String TAG = "start";
 
     eventBus.consumer("/status").handler(statusController::eventGetStatus);
 
-    logger.info("[{}] {} started.", tag, StatusVerticle.class.getSimpleName());
+    logger.info("[{}] {} started.", TAG, StatusVerticle.class.getSimpleName());
     startPromise.complete();
   }
 }

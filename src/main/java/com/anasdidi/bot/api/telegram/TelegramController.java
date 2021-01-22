@@ -20,7 +20,7 @@ class TelegramController {
   }
 
   void eventSendMessage(Message<Object> request) {
-    String tag = AppConstants.TelegramMethod.SendMessage.value;
+    final String TAG = AppConstants.TelegramMethod.SendMessage.value;
     JsonObject requestBody = new JsonObject((String) request.body());
     String requestId = requestBody.getString("requestId");
 
@@ -32,9 +32,9 @@ class TelegramController {
     webClient.postAbs(telegramUrl)//
         .putHeader(AppConstants.Header.ContentType.value, AppConstants.MediaType.AppJson.value)//
         .rxSendJsonObject(message).subscribe(response -> {
-          logger.info("[{}:{}] Sent successfully", tag, requestId);
+          logger.info("[{}:{}] Sent successfully", TAG, requestId);
         }, e -> {
-          logger.error("[{}:{}] Sent failed!", tag, requestId);
+          logger.error("[{}:{}] Sent failed!", TAG, requestId);
           logger.error(e);
         });
   }

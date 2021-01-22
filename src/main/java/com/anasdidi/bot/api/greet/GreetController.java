@@ -20,7 +20,7 @@ class GreetController {
   }
 
   void eventSendHelloUser(Message<Object> request) {
-    String tag = AppConstants.Event.Greet.value;
+    final String TAG = AppConstants.Event.Greet.value;
     JsonObject requestBody = new JsonObject((String) request.body());
     String requestId = requestBody.getString("requestId");
 
@@ -32,7 +32,7 @@ class GreetController {
         .append(vo.getMessageFromId());
 
     if (logger.isDebugEnabled()) {
-      logger.debug("[{}:{}] response={}", tag, requestId, response.toString());
+      logger.debug("[{}:{}] response={}", TAG, requestId, response.toString());
     }
 
     requestBody.put("response", response.toString());

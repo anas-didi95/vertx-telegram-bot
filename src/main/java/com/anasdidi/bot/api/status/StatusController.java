@@ -25,7 +25,7 @@ class StatusController {
   }
 
   void eventGetStatus(Message<Object> request) {
-    String tag = AppConstants.Event.Status.value;
+    final String TAG = AppConstants.Event.Status.value;
     JsonObject requestBody = new JsonObject((String) request.body());
     String requestId = requestBody.getString("requestId");
 
@@ -39,9 +39,9 @@ class StatusController {
       JsonObject budgetBody = budget.bodyAsJsonObject();
 
       if (logger.isDebugEnabled()) {
-        logger.debug("[{}:{}] securityBody\n{}", tag, requestId, securityBody.encodePrettily());
-        logger.debug("[{}:{}] botBody\n{}", tag, requestId, botBody.encodePrettily());
-        logger.debug("[{}:{}] budgetBody\n{}", tag, requestId, budgetBody.encodePrettily());
+        logger.debug("[{}:{}] securityBody\n{}", TAG, requestId, securityBody.encodePrettily());
+        logger.debug("[{}:{}] botBody\n{}", TAG, requestId, botBody.encodePrettily());
+        logger.debug("[{}:{}] budgetBody\n{}", TAG, requestId, budgetBody.encodePrettily());
       }
 
       return new JsonObject()//
@@ -63,7 +63,7 @@ class StatusController {
           .toString();
 
       if (logger.isDebugEnabled()) {
-        logger.debug("[{}:{}] response={}", tag, requestId, response);
+        logger.debug("[{}:{}] response={}", TAG, requestId, response);
       }
 
       requestBody.put("response", response);
