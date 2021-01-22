@@ -22,11 +22,11 @@ public class GreetVerticle extends AbstractVerticle {
 
   @Override
   public void start(Promise<Void> startPromise) throws Exception {
-    String tag = "start";
+    final String TAG = "start";
 
     eventBus.consumer(AppConstants.Event.Greet.value, greetController::eventSendHelloUser);
 
-    logger.info("[{}] GreetVerticle started.", tag);
+    logger.info("[{}] GreetVerticle started.", TAG);
     startPromise.complete();
   }
 }

@@ -23,21 +23,28 @@ public class TestGreetVerticle {
 
   @Test
   void testGetGreetSuccess(Vertx vertx, VertxTestContext testContext) throws Exception {
-    String testValue = "" + System.currentTimeMillis();
+    int testValueInt = (int) (System.currentTimeMillis() / 1000);
+    String testValueStr = "" + testValueInt;
     JsonObject requestBody = new JsonObject()//
         .put("message", new JsonObject()//
             .put("text", AppConstants.Event.Greet.value)//
             .put("from", new JsonObject()//
-                .put("first_name", "first_name:" + testValue)//
-                .put("id", 000)));
+                .put("first_name", "first_name:" + testValueStr)//
+                .put("id", testValueInt)));
 
     vertx.eventBus().rxRequest(AppConstants.Event.Greet.value, requestBody.encode()).subscribe(response -> {
+      StringBuilder expectedMessage = new StringBuilder()//
+          .append("Hello, first_name:" + testValueStr).append("\n")//
+          .append("\n")//
+          .append("User Id:").append("\n")//
+          .append(testValueInt);
+
       testContext.verify(() -> {
         JsonObject responseBody = new JsonObject((String) response.body());
         Assertions.assertNotNull(responseBody);
 
         String message = responseBody.getString("response");
-        Assertions.assertEquals("Hello, first_name:" + testValue, message);
+        Assertions.assertEquals(expectedMessage.toString(), message);
 
         testContext.completeNow();
       });

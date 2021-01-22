@@ -23,11 +23,11 @@ public class TelegramVerticle extends AbstractVerticle {
 
   @Override
   public void start(Promise<Void> startPromise) throws Exception {
-    String tag = "start";
+    final String TAG = "start";
 
     eventBus.consumer(AppConstants.TelegramMethod.SendMessage.value).handler(telegramController::eventSendMessage);
 
-    logger.info("[{}] {} started", tag, TelegramVerticle.class.getSimpleName());
+    logger.info("[{}] {} started", TAG, TelegramVerticle.class.getSimpleName());
     startPromise.complete();
   }
 

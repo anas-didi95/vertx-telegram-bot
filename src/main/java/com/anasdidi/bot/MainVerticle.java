@@ -81,13 +81,13 @@ public class MainVerticle extends AbstractVerticle {
   }
 
   private void requestHandler(RoutingContext routingContext) {
-    String tag = "requestHandler";
+    final String TAG = "requestHandler";
     String requestId = routingContext.get("requestId");
     JsonObject requestBody = routingContext.getBodyAsJson()//
         .put("requestId", requestId);
 
     if (logger.isDebugEnabled()) {
-      logger.debug("[{}:{}] requestBody\n{}", tag, requestId, requestBody.encodePrettily());
+      logger.debug("[{}:{}] requestBody\n{}", TAG, requestId, requestBody.encodePrettily());
     }
 
     String messageText = requestBody.getJsonObject("message").getString("text");
@@ -99,17 +99,17 @@ public class MainVerticle extends AbstractVerticle {
     }
 
     if (!hasFound) {
-      logger.error("[{}:{}] Event is undefined! event={}", tag, requestId, event);
+      logger.error("[{}:{}] Event is undefined! event={}", TAG, requestId, event);
       routingContext.response().end();
     } else {
       eventBus.rxRequest(event, requestBody.encode()).subscribe(response -> {
         if (logger.isDebugEnabled()) {
           JsonObject responseBody = new JsonObject((String) response.body());
-          logger.debug("[{}:{}] responseBody\n{}", tag, requestId, responseBody.encodePrettily());
+          logger.debug("[{}:{}] responseBody\n{}", TAG, requestId, responseBody.encodePrettily());
         }
-        logger.info("[{}:{}] Event success, event={}", tag, requestId, event);
+        logger.info("[{}:{}] Event success, event={}", TAG, requestId, event);
       }, e -> {
-        logger.error("[{}:{}] Event failed! event={}", tag, requestId, event);
+        logger.error("[{}:{}] Event failed! event={}", TAG, requestId, event);
         logger.error(e);
       });
 
