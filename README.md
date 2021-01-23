@@ -37,6 +37,8 @@ Following table is a **mandatory** environment variables used in this project.
 | --- | --- | --- |
 | APP_PORT | Number | Server port |
 | TELEGRAM_TOKEN | String | Telegram token |
+| HTTP_SECURITY | String | HTTP endpoint for Security service |
+| HTTP_BOT | String | HTTP endpoint for Bot service |
 
 Following table is a **optional** environment variables used in this project.
 | Variable Name | Datatype | Description | Default Value |
@@ -66,6 +68,7 @@ To run your application:
 
 ## Available commands
 * `/greet`: Return greeting message from the bot.
+* `/status`: Return status of services from the bot.
 
 ---
 
