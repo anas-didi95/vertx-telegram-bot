@@ -71,4 +71,7 @@ public class AppConstants {
       this.value = value;
     }
   }
+
+  public static final String SERVICE_HTTP_SECURITY = "service-http-security";
+  public static final String SERVICE_HTTP_BOT = "service-http-bot";
 }
