@@ -5,6 +5,7 @@ import com.anasdidi.bot.common.AppConstants;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import io.vertx.core.json.JsonObject;
@@ -20,7 +21,7 @@ public class TestStatusVerticle {
     vertx.deployVerticle(new MainVerticle(), testContext.succeeding(id -> testContext.completeNow()));
   }
 
-  // @Test
+  @Test
   void testGetStatusSuccess(Vertx vertx, VertxTestContext testContext) {
     JsonObject requestBody = new JsonObject()//
         .put("message", new JsonObject()//

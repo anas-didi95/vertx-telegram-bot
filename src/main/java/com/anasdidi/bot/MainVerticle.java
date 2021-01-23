@@ -28,6 +28,8 @@ import io.vertx.reactivex.ext.web.RoutingContext;
 import io.vertx.reactivex.ext.web.client.WebClient;
 import io.vertx.reactivex.ext.web.handler.BodyHandler;
 import io.vertx.reactivex.ext.web.handler.CorsHandler;
+import io.vertx.reactivex.servicediscovery.ServiceDiscovery;
+import io.vertx.reactivex.servicediscovery.types.HttpEndpoint;
 
 public class MainVerticle extends AbstractVerticle {
 
@@ -63,6 +65,14 @@ public class MainVerticle extends AbstractVerticle {
       router.get("/ping").handler(healthCheckHandler);
       router.get("/test")
           .handler(routingContext -> routingContext.response().end(new JsonObject().put("ok", true).encode()));
+
+      ServiceDiscovery serviceDiscovery = ServiceDiscovery.create(vertx);
+      serviceDiscovery
+          .rxPublish(HttpEndpoint.createRecord("service-http-security", "https://api.anasdidi.dev/security"))
+          .subscribe();
+      serviceDiscovery.rxPublish(HttpEndpoint.createRecord("service-http-bot", "https://api.anasdidi.dev/bot"))
+          .subscribe();
+      serviceDiscovery.close();
 
       this.eventBus = vertx.eventBus();
       this.webClient = WebClient.create(vertx);
