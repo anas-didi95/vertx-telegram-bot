@@ -13,6 +13,8 @@ import com.anasdidi.bot.common.AppUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import io.reactivex.Single;
+import io.reactivex.disposables.Disposable;
 import io.vertx.config.ConfigRetrieverOptions;
 import io.vertx.config.ConfigStoreOptions;
 import io.vertx.core.Promise;
@@ -28,6 +30,9 @@ import io.vertx.reactivex.ext.web.RoutingContext;
 import io.vertx.reactivex.ext.web.client.WebClient;
 import io.vertx.reactivex.ext.web.handler.BodyHandler;
 import io.vertx.reactivex.ext.web.handler.CorsHandler;
+import io.vertx.reactivex.servicediscovery.ServiceDiscovery;
+import io.vertx.reactivex.servicediscovery.types.HttpEndpoint;
+import io.vertx.servicediscovery.Record;
 
 public class MainVerticle extends AbstractVerticle {
 
@@ -64,10 +69,11 @@ public class MainVerticle extends AbstractVerticle {
       router.get("/test")
           .handler(routingContext -> routingContext.response().end(new JsonObject().put("ok", true).encode()));
 
+      setupServiceDiscovery();
       this.eventBus = vertx.eventBus();
       this.webClient = WebClient.create(vertx);
       vertx.deployVerticle(new GreetVerticle(eventBus));
-      vertx.deployVerticle(new StatusVerticle(eventBus, webClient));
+      vertx.deployVerticle(new StatusVerticle());
       vertx.deployVerticle(new TelegramVerticle(eventBus, webClient));
 
       Router contextPath = Router.router(vertx).mountSubRouter("/bot", router);
@@ -129,5 +135,25 @@ public class MainVerticle extends AbstractVerticle {
     return CorsHandler.create("*")//
         .allowedHeaders(headerNames)//
         .allowedMethods(methods);
+  }
+
+  void setupServiceDiscovery() throws Exception {
+    final String TAG = "setupServiceDiscovery";
+    AppConfig appConfig = AppConfig.instance();
+
+    ServiceDiscovery serviceDiscovery = ServiceDiscovery.create(vertx);
+    Single<Record> httpSecurityService = serviceDiscovery
+        .rxPublish(HttpEndpoint.createRecord(AppConstants.SERVICE_HTTP_SECURITY, appConfig.getHttpSecurity()));
+    Single<Record> httpBotService = serviceDiscovery
+        .rxPublish(HttpEndpoint.createRecord(AppConstants.SERVICE_HTTP_BOT, appConfig.getHttpBot()));
+
+    Disposable merger = Single.merge(httpSecurityService, httpBotService).subscribe(r -> {
+      logger.info("[{}] Service {} published successfully.", TAG, r.getName());
+    });
+
+    while (!merger.isDisposed()) {
+    }
+
+    serviceDiscovery.close();
   }
 }
