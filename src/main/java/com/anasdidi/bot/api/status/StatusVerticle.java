@@ -50,8 +50,7 @@ public class StatusVerticle extends AbstractVerticle {
 
       return new JsonObject()//
           .put("security", !botNotAvailable)//
-          .put("bot", !botNotAvailable)//
-          .put("budget", true);
+          .put("bot", !botNotAvailable);
     }).subscribe(result -> {
       String response = new StringBuilder()//
           .append("Server status\n")//
@@ -61,9 +60,6 @@ public class StatusVerticle extends AbstractVerticle {
           .append("\n")//
           .append("bot: ")
           .append(result.getBoolean("bot") ? AppConstants.Emoji.Tick.value : AppConstants.Emoji.Cross.value)//
-          .append("\n")//
-          .append("budget: ")
-          .append(result.getBoolean("budget") ? AppConstants.Emoji.Tick.value : AppConstants.Emoji.Cross.value)//
           .toString();
 
       if (logger.isDebugEnabled()) {
