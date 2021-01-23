@@ -22,6 +22,8 @@ public class AppConfig {
         .put("APP_PORT", appConfig.getAppPort())//
         .put("LOG_LEVEL", appConfig.getLogLevel())//
         .put("TELEGRAM_TOKEN", appConfig.getTelegramToken())//
+        .put("HTTP_SECURITY", appConfig.getHttpSecurity())//
+        .put("HTTP_BOT", appConfig.getHttpBot())//
         .encodePrettily();
   }
 
@@ -51,5 +53,13 @@ public class AppConfig {
 
   public String getTelegramToken() {
     return config.getString("TELEGRAM_TOKEN");
+  }
+
+  public String getHttpSecurity() {
+    return config.getString("HTTP_SECURITY");
+  }
+
+  public String getHttpBot() {
+    return config.getString("HTTP_BOT");
   }
 }

@@ -137,14 +137,15 @@ public class MainVerticle extends AbstractVerticle {
         .allowedMethods(methods);
   }
 
-  void setupServiceDiscovery() {
+  void setupServiceDiscovery() throws Exception {
     final String TAG = "setupServiceDiscovery";
+    AppConfig appConfig = AppConfig.instance();
 
     ServiceDiscovery serviceDiscovery = ServiceDiscovery.create(vertx);
     Single<Record> httpSecurityService = serviceDiscovery
-        .rxPublish(HttpEndpoint.createRecord(AppConstants.SERVICE_HTTP_SECURITY, "https://api.anasdidi.dev/security"));
+        .rxPublish(HttpEndpoint.createRecord(AppConstants.SERVICE_HTTP_SECURITY, appConfig.getHttpSecurity()));
     Single<Record> httpBotService = serviceDiscovery
-        .rxPublish(HttpEndpoint.createRecord(AppConstants.SERVICE_HTTP_BOT, "https://api.anasdidi.dev/bot"));
+        .rxPublish(HttpEndpoint.createRecord(AppConstants.SERVICE_HTTP_BOT, appConfig.getHttpBot()));
 
     Disposable merger = Single.merge(httpSecurityService, httpBotService).subscribe(r -> {
       logger.info("[{}] Service {} published successfully.", TAG, r.getName());

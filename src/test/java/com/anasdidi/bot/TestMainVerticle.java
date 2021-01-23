@@ -35,6 +35,8 @@ public class TestMainVerticle {
       Assertions.assertNotNull(appConfig.getAppPort());
       Assertions.assertNotNull(appConfig.getLogLevel());
       Assertions.assertNotNull(appConfig.getTelegramToken());
+      Assertions.assertNotNull(appConfig.getHttpSecurity());
+      Assertions.assertNotNull(appConfig.getHttpBot());
 
       testContext.completeNow();
     });
