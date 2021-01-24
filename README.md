@@ -26,7 +26,7 @@ Back-end service which provides an interface for bot command using Telegram API.
 
 ## Technologies
 * Vert.x - Version 3.9.4
-* Log4j2 - Version 2.13.3
+* Log4j2 - Version 2.14.0
 
 ---
 
